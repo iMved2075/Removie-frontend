@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import Modal from "./Modal";
 import MovieCard from "./MovieCard";
 import { MdOutlineClose } from "react-icons/md";
+import { API_BASE_URL } from "@/lib/api";
 
 const MovieSearch = ({ isOpen, onClose }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -65,14 +66,17 @@ const MovieSearch = ({ isOpen, onClose }) => {
       const controller = new AbortController();
       abortRef.current = controller;
 
-      const response = await fetch("http://localhost:5000/api/movies/search?limit=30&enrich=posters", {
+      const response = await fetch(
+        `${API_BASE_URL}/api/movies/search?limit=30&enrich=posters`,
+        {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query: trimmed }),
         signal: controller.signal,
-      });
+      }
+      );
 
       if (response.status === 429) {
         let retryAfter = "Please wait and try again.";
@@ -97,7 +101,7 @@ const MovieSearch = ({ isOpen, onClose }) => {
       setSearchResults(data);
     } catch (err) {
       if (err.name === "AbortError") return;
-      setError("Failed to fetch search results. Make sure the backend is running.");
+      setError("Failed to fetch search results. Please try again shortly.");
       console.error(err);
     } finally {
       setLoading(false);

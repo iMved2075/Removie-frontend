@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import MovieCard from "@/components/MovieCard";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function MovieDetailsPage() {
   const params = useParams();
@@ -19,7 +20,7 @@ export default function MovieDetailsPage() {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(`http://localhost:5000/api/movies/id/${movieId}`);
+        const response = await fetch(`${API_BASE_URL}/api/movies/id/${movieId}`);
         if (!response.ok) throw new Error("Failed to load movie");
         const data = await response.json();
         if (Array.isArray(data) && data.length) {
@@ -42,7 +43,7 @@ export default function MovieDetailsPage() {
     const loadRecs = async () => {
       setRecLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/recommendations", {
+        const response = await fetch(`${API_BASE_URL}/api/recommendations`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -55,7 +56,7 @@ export default function MovieDetailsPage() {
         const detailResponses = await Promise.all(
           titles.map((title) =>
             fetch(
-              `http://localhost:5000/api/movies/movie-details?title=${encodeURIComponent(title)}`
+              `${API_BASE_URL}/api/movies/movie-details?title=${encodeURIComponent(title)}`
             ).then((res) => (res.ok ? res.json() : []))
           )
         );

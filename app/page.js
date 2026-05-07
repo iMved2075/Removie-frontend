@@ -2,6 +2,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import MovieCard from "@/components/MovieCard";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function Home() {
   const [movies, setMovies] = useState([]);
@@ -11,12 +12,14 @@ export default function Home() {
 
   const fetchMovies = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/movies?limit=48&random=1&enrich=posters");
+      const response = await fetch(
+        `${API_BASE_URL}/api/movies?limit=48&random=1&enrich=posters`
+      );
       if (!response.ok) throw new Error("Failed to fetch movies");
       const data = await response.json();
       setMovies(data.slice(0, 12));
     } catch (err) {
-      setError("Failed to load movies. Make sure the backend is running on port 5000.");
+      setError("Failed to load movies. Please try again shortly.");
       console.error(err);
     } finally {
       if (isMounted.current) setLoading(false);
@@ -25,7 +28,9 @@ export default function Home() {
 
   const fetchTopRated = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/movies/top-rated?limit=6&enrich=posters");
+      const response = await fetch(
+        `${API_BASE_URL}/api/movies/top-rated?limit=6&enrich=posters`
+      );
       if (!response.ok) throw new Error("Failed to fetch top rated");
       const data = await response.json();
       setTopRated(data);

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import MovieCard from "@/components/MovieCard";
 import { FaMasksTheater } from "react-icons/fa6";
+import { API_BASE_URL } from "@/lib/api";
 
 const GenresPage = () => {
   const [genres, setGenres] = useState([]);
@@ -12,13 +13,13 @@ const GenresPage = () => {
 
   const fetchGenres = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/genres");
+      const response = await fetch(`${API_BASE_URL}/api/genres`);
       if (!response.ok) throw new Error("Failed to fetch genres");
       const data = await response.json();
       setGenres(data);
       setLoading(false);
     } catch (err) {
-      setError("Failed to load genres. Make sure the backend is running.");
+      setError("Failed to load genres. Please try again shortly.");
       console.error(err);
       setLoading(false);
     }
@@ -28,13 +29,16 @@ const GenresPage = () => {
     setLoading(true);
     setSelectedGenre(genre);
     try {
-      const response = await fetch("http://localhost:5000/api/movies/genre?limit=20&enrich=posters", {
+      const response = await fetch(
+        `${API_BASE_URL}/api/movies/genre?limit=20&enrich=posters`,
+        {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ genre }),
-      });
+      }
+      );
 
       if (!response.ok) throw new Error("Failed to fetch movies");
       const data = await response.json();
